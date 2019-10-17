@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+
+  php:
+    build: ./docker/php
+    ports:
+      - "9001:9001"
+    tty: true
+    restart: on-failure
+    volumes:
+      - .:/var/www:cached
+      - ./var/log:/var/www/var/log:cached
+    extra_hosts:
+      - "docker-host.local:127.0.0.1"
+    networks:
+      - backend
+
+  nginx:
+    build: ./docker/nginx
+    ports:
+      - "8081:80"
+    tty: true
+    restart: always
+    depends_on:
+      - php
+    volumes:
+      - ./var/log/nginx:/var/log/nginx:cached
+      - .:/var/www:cached
+    extra_hosts:
+      - "booking.local:127.0.0.1"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"
