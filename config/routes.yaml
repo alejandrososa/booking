@@ -1,3 +1,9 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+rest.calculate_area.post:
+  path: /api/v1/missile/calculate-area
+  methods: [POST]
+  controller: Firestorm\MonCalamari\Ui\Api\Controller\CalculateAreaController
+
+rest.stats:
+  path: /api/v1/booking/stats
+  methods: [POST]
+  controller: Booking\Renting\Ui\Api\Controller\GetBookingStatsController

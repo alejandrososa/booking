@@ -1,6 +1,56 @@
 Booking Code Challenge
 ==
 
+Problem definition
+---
+
+We own an apartment and we’re renting it through different popular web sites. Before
+actually renting the apartment for some days, those platforms send us booking requests. We
+want to get insights from those booking requests in order to make better decisions. For
+instance, we’d like to know what’s the profit per night we’re getting and what could be the
+best combination of bookings to maximize our profits.
+
+We will create an API for this purpose. 
+
+**/stats endpoint**
+
+Given a list of booking requests, return the average, minimum, and maximum profit per
+night taking into account all the booking requests in the payload. 
+
+Example request:
+
+POST /stats
+```
+[
+    {
+        "request_id":"bookata_XY123",
+        "check_in":"2020-01-01",
+        "nights":5,
+        "selling_rate":200,
+        "margin":20
+    },
+    {
+        "request_id":"kayete_PP234",
+        "check_in":"2020-01-04",
+        "nights":4,
+        "selling_rate":156,
+        "margin":22
+    }
+]
+```
+Example response:
+
+```
+200 OK
+
+{
+    "avg_night":8.29,
+    "min_night":8,
+    "max_night":8.58
+}
+```
+
+
 ## Installation step by step with Docker
 
 1. Install [docker](https://docs.docker.com/compose/install/) and [docker-compose](https://docs.docker.com/compose/install/#install-compose)
