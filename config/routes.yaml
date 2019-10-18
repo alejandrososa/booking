@@ -1,0 +1,9 @@
+rest.maximize:
+  path: /api/v1/booking/maximize
+  methods: [POST]
+  controller: Booking\Renting\Ui\Api\Controller\GetBookingMaximizeController
+
+rest.stats:
+  path: /api/v1/booking/stats
+  methods: [POST]
+  controller: Booking\Renting\Ui\Api\Controller\GetBookingStatsController
