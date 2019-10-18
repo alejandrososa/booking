@@ -128,6 +128,19 @@
     "symfony/config": {
         "version": "v4.3.5"
     },
+    "symfony/console": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "482d233eb8de91ebd042992077bbd5838858890c"
+        },
+        "files": [
+            "bin/console",
+            "config/bootstrap.php"
+        ]
+    },
     "symfony/css-selector": {
         "version": "v4.3.5"
     },
