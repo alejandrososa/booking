@@ -36,8 +36,10 @@ services:
         arguments:
             - '@Booking\Renting\Infrastructure\Utils\Calculator'
             - '@Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer'
+        tags: [messenger.message_handler]
 
     Booking\Renting\Application\Booking\GetBookingMaximizeHandler:
         arguments:
             - '@Booking\Renting\Infrastructure\Utils\Calculator'
             - '@Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer'
+        tags: [messenger.message_handler]

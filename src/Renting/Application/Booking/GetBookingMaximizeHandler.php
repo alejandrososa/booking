@@ -16,9 +16,9 @@ use Booking\Renting\Domain\Model\Booking\BookingRequestMargin;
 use Booking\Renting\Domain\Model\Booking\BookingRequestNights;
 use Booking\Renting\Domain\Model\Booking\BookingRequestSellingRate;
 use Booking\Renting\Infrastructure\Utils\Calculator;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Handler\MessageSubscriberInterface;
 
-class GetBookingMaximizeHandler implements MessageHandlerInterface
+class GetBookingMaximizeHandler implements MessageSubscriberInterface
 {
 	const FIELDS_MANDATORY = ['request_id', 'check_in', 'nights', 'selling_rate', 'margin'];
 
@@ -38,17 +38,14 @@ class GetBookingMaximizeHandler implements MessageHandlerInterface
 		$this->transformable = $transformable;
 	}
 
-    public function __invoke(GetBookingStats $query)
+    public function __invoke(GetBookingMaximize $query)
     {
-        echo '<pre>';print_r([__CLASS__,__LINE__,__METHOD__, ]);echo '</pre>';die();
         $list = $this->populateBookingRequests($query);
         $result = [];
         foreach ($list as $booking) {
             /** @var BookingRequest $booking */
             $result[] = $booking->profitPerNight();
         }
-
-
     }
 
     private function populateBookingRequests(GetBookingStats $query): \Generator
@@ -75,4 +72,9 @@ class GetBookingMaximizeHandler implements MessageHandlerInterface
             throw FieldNotFound::reason(current($diff));
         }
     }
+
+	public static function getHandledMessages(): iterable
+	{
+		yield GetBookingMaximize::class;
+	}
 }
