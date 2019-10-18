@@ -26,7 +26,18 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    Booking\Renting\Infrastructure\Utils\Calculator:
+        public: true
+
+    Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer:
+        public: true
+
     Booking\Renting\Application\Booking\GetBookingStatsHandler:
+        arguments:
+            - '@Booking\Renting\Infrastructure\Utils\Calculator'
+            - '@Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer'
+
+    Booking\Renting\Application\Booking\GetBookingMaximizeHandler:
         arguments:
             - '@Booking\Renting\Infrastructure\Utils\Calculator'
             - '@Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer'
