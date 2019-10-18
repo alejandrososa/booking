@@ -80,6 +80,11 @@ class BookingRequest extends AggregateRoot implements ModelInterface
         return (($this->sellingRate->toInt() * $this->margin->toInt()) / 100) / $this->nights->toInt();
     }
 
+    public function profit()
+    {
+        return $this->sellingRate->toInt() * ($this->margin->toInt() / 100);
+    }
+
     protected function whenBookingRequestWasCreated(BookingRequestWasCreated $event)
     {
         $this->id = $event->id();

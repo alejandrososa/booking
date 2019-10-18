@@ -29,7 +29,13 @@ services:
     Booking\Renting\Infrastructure\Utils\Calculator:
         public: true
 
+    Booking\Renting\Infrastructure\Utils\CombinatorialOptimization:
+        public: true
+
     Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer:
+        public: true
+
+    Booking\Renting\Application\Transformer\ResponseMaximizeArrayTransformer:
         public: true
 
     Booking\Renting\Application\Booking\GetBookingStatsHandler:
@@ -41,5 +47,6 @@ services:
     Booking\Renting\Application\Booking\GetBookingMaximizeHandler:
         arguments:
             - '@Booking\Renting\Infrastructure\Utils\Calculator'
-            - '@Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer'
+            - '@Booking\Renting\Infrastructure\Utils\CombinatorialOptimization'
+            - '@Booking\Renting\Application\Transformer\ResponseMaximizeArrayTransformer'
         tags: [messenger.message_handler]
