@@ -50,6 +50,63 @@ Example response:
 }
 ```
 
+**/maximize endpoint**
+
+Given a list of booking requests, return the best combination of requests that maximizes total
+profits.
+
+Example request:
+
+POST /stats
+```
+[
+    {
+        "request_id":"bookata_XY123",
+        "check_in":"2020-01-01",
+        "nights":5,
+        "selling_rate":200,
+        "margin":20
+    },
+    {
+        "request_id":"kayete_PP234",
+        "check_in":"2020-01-04",
+        "nights":4,
+        "selling_rate":156,
+        "margin":5
+    },
+    {
+        "request_id":"atropote_AA930",
+        "check_in":"2020-01-04",
+        "nights":4,
+        "selling_rate":150,
+        "margin":6
+    },
+    {
+        "request_id":"acme_AAAAA",
+        "check_in":"2020-01-10",
+        "nights":4,
+        "selling_rate":160,
+        "margin":30
+    }
+]
+```
+Example response:
+
+```
+200 OK
+
+{
+    "request_ids":[
+        "bookata_XY123",
+        "acme_AAAAA"
+    ],
+    "total_profit":88,
+    "avg_night":10,
+    "min_night":8,
+    "max_night":12
+}
+```
+
 
 ## Installation step by step with Docker
 
@@ -128,6 +185,62 @@ RESPONSE STATUS 400:
 }
 ```
 
+```bash
+POST
+
+curl -X POST http://booking.local:8081/api/v1/booking/maximize \
+  -H 'Content-Type: application/json' \
+  -d '[
+        {
+        "request_id":"bookata_XY123",
+        "check_in":"2020-01-01",
+        "nights":5,
+        "selling_rate":200,
+        "margin":20
+        },
+        {
+        "request_id":"kayete_PP234",
+        "check_in":"2020-01-04",
+        "nights":4,
+        "selling_rate":156,
+        "margin":5
+        },
+        {
+        "request_id":"atropote_AA930",
+        "check_in":"2020-01-04",
+        "nights":4,
+        "selling_rate":150,
+        "margin":6
+        },
+        {
+        "request_id":"acme_AAAAA",
+        "check_in":"2020-01-10",
+        "nights":4,
+        "selling_rate":160,
+        "margin":30
+        }
+    ]'
+  
+RESPONSE STATUS 200:    
+                                                             
+{
+    "request_ids": [
+        "bookata_XY123",
+        "acme_AAAAA"
+    ],
+    "total_profit": 88,
+    "avg_night": 10,
+    "min_night": 8,
+    "max_night": 12
+}
+
+RESPONSE STATUS 400:   
+                                                              
+{
+    "message": "Error! Field nights is mandatory"
+}
+```
+
 **Testing**
 
 ```bash
@@ -135,10 +248,10 @@ $ docker-compose exec php cp phpunit.xml.dist phpunit.xml
 $ docker-compose exec php ./vendor/bin/phpunit
 
 PHPUnit 7.5.16 by Sebastian Bergmann and contributors.
-........................................                          40 / 40 (100%)
+....................................................              52 / 52 (100%)
 
-Time: 133 ms, Memory: 8.00 MB
-OK (40 tests, 60 assertions)
+Time: 3.21 seconds, Memory: 8.00 MB
+OK (52 tests, 79 assertions)
 ```
 
 Coverage

@@ -16,9 +16,9 @@ use Booking\Renting\Domain\Model\Booking\BookingRequestMargin;
 use Booking\Renting\Domain\Model\Booking\BookingRequestNights;
 use Booking\Renting\Domain\Model\Booking\BookingRequestSellingRate;
 use Booking\Renting\Infrastructure\Utils\Calculator;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Handler\MessageSubscriberInterface;
 
-class GetBookingStatsHandler implements MessageHandlerInterface
+class GetBookingStatsHandler implements MessageSubscriberInterface
 {
 	const FIELDS_MANDATORY = ['request_id', 'check_in', 'nights', 'selling_rate', 'margin'];
 
@@ -79,4 +79,10 @@ class GetBookingStatsHandler implements MessageHandlerInterface
             throw FieldNotFound::reason(current($diff));
         }
     }
+
+
+	public static function getHandledMessages(): iterable
+	{
+		yield GetBookingStats::class;
+	}
 }

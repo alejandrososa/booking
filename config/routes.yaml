@@ -1,7 +1,7 @@
-rest.calculate_area.post:
-  path: /api/v1/missile/calculate-area
+rest.maximize:
+  path: /api/v1/booking/maximize
   methods: [POST]
-  controller: Firestorm\MonCalamari\Ui\Api\Controller\CalculateAreaController
+  controller: Booking\Renting\Ui\Api\Controller\GetBookingMaximizeController
 
 rest.stats:
   path: /api/v1/booking/stats
