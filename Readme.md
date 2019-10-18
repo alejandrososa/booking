@@ -90,6 +90,68 @@ Just run `docker-compose up -d`, then:
 
 * App: visit [booking.local:8081](http://booking.local:8081)  
 
+**cURL**
+
+```bash
+POST
+
+curl -X POST http://booking.local:8081/api/v1/booking/stats \
+  -H 'Content-Type: application/json' \
+  -d '[
+    {
+        "request_id":"bookata_XY123",
+        "check_in":"2020-01-01",
+        "nights":5,
+        "selling_rate":200,
+        "margin":20
+    },
+    {
+        "request_id":"kayete_PP234",
+        "check_in":"2020-01-04",
+        "nights":4,
+        "selling_rate":156,
+        "margin":22
+    }]'
+  
+RESPONSE STATUS 200:    
+                                                             
+{
+    "avg_night": 8.29,
+    "min_night": 8,
+    "max_night": 8.58
+}
+
+RESPONSE STATUS 400:   
+                                                              
+{
+    "message": "Error! Field nights is mandatory"
+}
+```
+
+**Testing**
+
+```bash
+$ docker-compose exec php cp phpunit.xml.dist phpunit.xml 
+$ docker-compose exec php ./vendor/bin/phpunit
+
+PHPUnit 7.5.16 by Sebastian Bergmann and contributors.
+........................................                          40 / 40 (100%)
+
+Time: 133 ms, Memory: 8.00 MB
+OK (40 tests, 60 assertions)
+```
+
+Coverage
+```
+$ docker-compose exec php ./vendor/bin/phpunit --coverage-text
+```
+
+## Usage
+
+Just run `docker-compose up -d`, then:
+
+* App: visit [booking.local:8081](http://booking.local:8081)  
+
 ## How it works?
 
 Have a look at the `docker-compose.yml` file, here are the `docker-compose` built images:

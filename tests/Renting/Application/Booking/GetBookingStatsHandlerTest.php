@@ -10,17 +10,19 @@ namespace Booking\Tests\Renting\Application\Booking;
 use Booking\Renting\Application\Booking\GetBookingStats;
 use Booking\Renting\Application\Booking\GetBookingStatsHandler;
 use Booking\Renting\Application\Exception\FieldNotFound;
+use Booking\Renting\Application\Transformer\ResponseStatsArrayTransformer;
 use Booking\Renting\Infrastructure\Utils\Calculator;
-use PHPUnit\Framework\TestCase;
+use Booking\Tests\Shared\UnitTestCase;
 
-class GetBookingStatsHandlerTest extends TestCase
+class GetBookingStatsHandlerTest extends UnitTestCase
 {
     private $handler;
 
     protected function setUp()
     {
         $this->handler = new GetBookingStatsHandler(
-            new Calculator()
+            new Calculator(),
+			new ResponseStatsArrayTransformer()
         );
     }
 
@@ -40,12 +42,33 @@ class GetBookingStatsHandlerTest extends TestCase
         $this->assertInstanceOf(GetBookingStats::class, $this->getBookingStats());
     }
 
-    public function test_validate_that_an_exception_returns_if_the_calculated_area_not_found()
+    public function test_validate_that_an_exception_returns_if_fields_not_found()
     {
         $this->expectException(FieldNotFound::class);
 
-        $query = $this->getBookingStats();
+        $query = GetBookingStatsMother::fromArray([
+			[
+				'margin' => 22,
+			],
+			[
+				'request_id' => 'kayete_PP234',
+				'margin' => 22,
+			]
+		]);
 
         $this->handler->__invoke($query);
     }
+
+	public function test_you_can_find_a_calculated_profit_per_night()
+	{
+		$query = $this->getBookingStats();
+
+		$result = $this->handler->__invoke($query);
+
+		$this->assertNotNull($result);
+		$this->assertIsArray($result);
+		$this->assertArrayHasKey('avg_night', $result);
+		$this->assertArrayHasKey('min_night', $result);
+		$this->assertArrayHasKey('max_night', $result);
+	}
 }

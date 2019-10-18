@@ -8,6 +8,7 @@
 namespace Booking\Renting\Application\Booking;
 
 use Booking\Renting\Application\Exception\FieldNotFound;
+use Booking\Renting\Application\Transformer\TransformableInterface;
 use Booking\Renting\Domain\Model\Booking\BookingRequest;
 use Booking\Renting\Domain\Model\Booking\BookingRequestCheckIn;
 use Booking\Renting\Domain\Model\Booking\BookingRequestId;
@@ -19,15 +20,22 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class GetBookingStatsHandler implements MessageHandlerInterface
 {
-    /**
+	const FIELDS_MANDATORY = ['request_id', 'check_in', 'nights', 'selling_rate', 'margin'];
+
+	/**
      * @var Calculator
      */
     private $calculator;
+	/**
+	 * @var TransformableInterface
+	 */
+	private $transformable;
 
-    public function __construct(Calculator $calculator)
+	public function __construct(Calculator $calculator, TransformableInterface $transformable)
     {
         $this->calculator = $calculator;
-    }
+		$this->transformable = $transformable;
+	}
 
     public function __invoke(GetBookingStats $query)
     {
@@ -37,12 +45,14 @@ class GetBookingStatsHandler implements MessageHandlerInterface
             /** @var BookingRequest $booking */
             $result[] = $booking->profitPerNight();
         }
-        $stats = new \stdClass();
-        $stats->avg_night = $this->calculator->average($result);
-        $stats->min_night = $this->calculator->min($result);
-        $stats->max_night = $this->calculator->max($result);
 
-        return $stats;
+        $response = new GetBookingStatsResponse(
+			$this->calculator->average($result),
+			$this->calculator->min($result),
+			$this->calculator->max($result)
+		);
+
+        return $this->transformable->write($response)->read();
     }
 
     private function populateBookingRequests(GetBookingStats $query): \Generator
@@ -62,7 +72,7 @@ class GetBookingStatsHandler implements MessageHandlerInterface
 
     private function guardFieldsMandatory($request): void
     {
-        $keysMandatory = ['request_id', 'check_in', 'nights', 'selling_rate', 'margin',];
+        $keysMandatory = self::FIELDS_MANDATORY;
         $keys = array_keys($request);
         $diff = array_diff($keysMandatory, $keys);
         if (!empty($diff)) {

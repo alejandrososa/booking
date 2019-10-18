@@ -11,17 +11,30 @@ class Calculator
 {
     public function average(array $data)
     {
+    	$this->guardAllValuesAreNumeric($data);
+
         $avg = round(array_sum($data) / count($data), 2, PHP_ROUND_HALF_DOWN);
         return (float) number_format($avg, 2);
     }
 
     public function min(array $data)
     {
-        return min($data);
+		$this->guardAllValuesAreNumeric($data);
+
+		return min($data);
     }
 
     public function max(array $data)
     {
-        return max($data);
+		$this->guardAllValuesAreNumeric($data);
+
+		return max($data);
     }
+
+	private function guardAllValuesAreNumeric(array $values)
+	{
+		if (!array_product(array_map('is_numeric', $values))) {
+			throw new \Exception('Error! Values are not numeric');
+		}
+	}
 }

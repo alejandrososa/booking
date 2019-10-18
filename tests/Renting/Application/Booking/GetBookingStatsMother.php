@@ -36,4 +36,9 @@ final class GetBookingStatsMother
         ];
         return self::create($requests);
     }
+
+    public static function fromArray(array $requests): GetBookingStats
+    {
+        return self::create($requests);
+    }
 }
