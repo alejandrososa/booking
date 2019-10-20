@@ -63,8 +63,10 @@ class GetBookingMaximizeHandler implements MessageSubscriberInterface
             if(count($requestIds) === 1) {
                 $item = $this->optimization->filterRequestById(current($requestIds), 'request_id', $requests);
                 $bookingRequest = $this->populateBookingRequestByArray($item);
-                $profit = isset($item['selling_rate']) && isset($item['margin']) ? $bookingRequest->profit() : null;
-                $validRequests[] = ['ids' => array_values($requestIds), 'valid' => true, 'total_profit' => $profit];
+                $validRequests[] = [
+                    'ids' => array_values($requestIds),
+                    'valid' => true,
+                    'total_profit' => $bookingRequest->profit()];
             }
 
             if(count($requestIds) > 1) {
@@ -81,32 +83,18 @@ class GetBookingMaximizeHandler implements MessageSubscriberInterface
                     $profit = 0;
                     foreach ($items as $i => $item) {
                         $bookingRequest = $this->populateBookingRequestByArray($item);
-                        $profit += isset($item['selling_rate']) && isset($item['margin']) ? $bookingRequest->profit() : 0;
+                        $profit += $bookingRequest->profit();
                     }
-                    $validRequests[] = ['ids' => array_values($requestIds), 'valid' => true, 'total_profit' => $profit];
+                    $validRequests[] = [
+                        'ids' => array_values($requestIds),
+                        'valid' => true,
+                        'total_profit' => $profit
+                    ];
                 }
             }
         }
 
-        $key = $maxProfit = 0;
-        foreach ($validRequests as $index => $request) {
-            if(isset($request['total_profit']) && $request['total_profit'] >= $maxProfit) {
-                $maxProfit = $request['total_profit'];
-                $key = $index;
-            }
-        }
-
-        $bestProfitRequest = isset($validRequests[$key]) ? $validRequests[$key] : [];
-
-        $bestItems = [];
-        foreach ($bestProfitRequest['ids'] as $requestId) {
-            $bestItems[] = $this->optimization->filterRequestById($requestId, 'request_id', $requests);
-        }
-        $result = [];
-        foreach ($bestItems as $request) {
-            $bookingRequest = $this->populateBookingRequestByArray($request);
-            $result[] = $bookingRequest->profitPerNight();
-        }
+        list($bestProfitRequest, $result) = $this->getBestProfitAndResults($validRequests, $requests);
 
         $response = new GetBookingMaximizeResponse(
             $bestProfitRequest['ids'],
@@ -142,8 +130,37 @@ class GetBookingMaximizeHandler implements MessageSubscriberInterface
         }
     }
 
-	public static function getHandledMessages(): iterable
-	{
-		yield GetBookingMaximize::class;
-	}
+    /**
+     * @param array $validRequests
+     * @param array $requests
+     * @return array
+     */
+    private function getBestProfitAndResults(array $validRequests, array $requests): array
+    {
+        $key = $maxProfit = 0;
+        foreach ($validRequests as $index => $request) {
+            if (isset($request['total_profit']) && $request['total_profit'] >= $maxProfit) {
+                $maxProfit = $request['total_profit'];
+                $key = $index;
+            }
+        }
+
+        $bestProfitRequest = isset($validRequests[$key]) ? $validRequests[$key] : [];
+
+        $bestItems = [];
+        foreach ($bestProfitRequest['ids'] as $requestId) {
+            $bestItems[] = $this->optimization->filterRequestById($requestId, 'request_id', $requests);
+        }
+        $result = [];
+        foreach ($bestItems as $request) {
+            $bookingRequest = $this->populateBookingRequestByArray($request);
+            $result[] = $bookingRequest->profitPerNight();
+        }
+        return array($bestProfitRequest, $result);
+    }
+
+    public static function getHandledMessages(): iterable
+    {
+        yield GetBookingMaximize::class;
+    }
 }

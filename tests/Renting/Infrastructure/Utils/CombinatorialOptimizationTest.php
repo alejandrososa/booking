@@ -27,6 +27,31 @@ class CombinatorialOptimizationTest extends UnitTestCase
 		$this->co = null;
 	}
 
+	public function combinationsProvider()
+	{
+		return [
+			[['a','b'], [
+			    ['a'], ['b'], ['a','b']]
+            ],
+			[['a','b','c'], [
+			    ['a'], ['b'], ['a','b'],
+                ['c'], ['a','c'], ['b','c'],
+                ['a','b','c']]
+            ]
+		];
+	}
+
+	/**
+	 * @dataProvider combinationsProvider
+	 * @param $values
+	 * @param $expected
+	 */
+	public function test_it_should_create_all_combinations($values, $expected)
+	{
+		$result = $this->co->createCombinations($values);
+		$this->assertEquals($expected, $result);
+	}
+
 	public function requestsToFilterProvider()
 	{
 		return [
@@ -81,5 +106,25 @@ class CombinatorialOptimizationTest extends UnitTestCase
 
         $this->assertCount(2, $result);
         $this->assertEquals($days, $interval->days);
+	}
+
+    public function dateRangesProvider()
+    {
+        return [
+           [[['2019-10-01','2019-10-05'], ['2019-10-06','2019-10-08']], false],
+           [[['2019-10-01','2019-10-05'], ['2019-10-03','2019-10-08']], true],
+           [[['2019-10-01','2019-10-05'], ['2019-10-06','2019-10-10'], ['2019-10-09','2019-10-10']], true]
+        ];
+	}
+
+    /**
+     * @dataProvider dateRangesProvider
+     * @param $dateRanges
+     * @param $expected
+     */
+    public function test_should_validate_if_date_ranges_overlapping($dateRanges, $expected)
+    {
+        $result = $this->co->checkOverlappingRangesDate($dateRanges);
+        $this->assertSame($expected, $result);
 	}
 }

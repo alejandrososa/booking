@@ -19,7 +19,7 @@ class CombinatorialOptimization
 		$results = [[]];
 		foreach ($array as $key => $value) {
 			foreach ($results as $i => $combination) {
-				$results[] = $combination + [$i => $value];
+				$results[] = array_values($combination + [$i => $value]);
 			}
 		}
 		$results = array_filter($results);
